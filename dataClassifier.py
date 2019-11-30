@@ -350,4 +350,3 @@ if __name__ == '__main__':
   args, options = readCommand( sys.argv[1:] ) 
   # Run classifier
   runClassifier(args, options)
-  raw_input('input:')
