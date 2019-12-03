@@ -52,7 +52,7 @@ class PerceptronClassifier:
           current = trainingData[i]
           scores = util.Counter()
           for label in self.legalLabels:
-            scores[label] = current * self.weights[label]
+            scores[label] = current*self.weights[label]
 
           argmax = scores.argMax()
           ans = trainingLabels[i]

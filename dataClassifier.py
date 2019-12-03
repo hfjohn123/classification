@@ -125,6 +125,7 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage,
            break
   else:
     print "==================================="
+    print "Image Number %d" % selector
     prediction = guesses[selector]
     truth = testLabels[selector]
     print "Predicted %d; truth is %d" % (prediction, truth)
@@ -172,7 +173,7 @@ def readCommand( argv ):
   from optparse import OptionParser
   parser = OptionParser(USAGE_STRING)
 
-  parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['mostFrequent', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest'], default='mostFrequent')
+  parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['mostFrequent', 'nb', 'naiveBayes', 'p','perceptron', 'mira', 'minicontest'], default='mostFrequent')
   parser.add_option('-d', '--data', help=default('Dataset to use'), choices=['digits', 'faces'], default='digits')
   parser.add_option('-t', '--training', help=default('The size of the training set'), default=100, type="int")
   parser.add_option('-f', '--features', help=default('Whether to use enhanced features'), default=False, action="store_true")
@@ -184,7 +185,7 @@ def readCommand( argv ):
   parser.add_option('-a', '--autotune', help=default("Whether to automatically tune hyperparameters"), default=False, action="store_true")
   parser.add_option('-i', '--iterations', help=default("Maximum iterations to run training"), default=3, type="int")
   parser.add_option('-s', '--test', help=default("Amount of test data to use"), default=TEST_SET_SIZE, type="int")
-
+  parser.add_option('-r', '--analyze', help=default("How to analyze"), default=-1, type="int")
   options, otherjunk = parser.parse_args(argv)
   if len(otherjunk) != 0: raise Exception('Command line input not understood: ' + str(otherjunk))
   args = {}
@@ -198,7 +199,7 @@ def readCommand( argv ):
     print "using enhanced features?:\t" + str(options.features)
   else:
     print "using minicontest feature extractor"
-  print "training set size:\t" + str(options.training)
+
   if(options.data=="digits"):
     printImage = ImagePrinter(DIGIT_DATUM_WIDTH, DIGIT_DATUM_HEIGHT).printImage
     if (options.features):
@@ -249,7 +250,7 @@ def readCommand( argv ):
         classifier.automaticTuning = True
     else:
         print "using smoothing parameter k=%f for naivebayes" %  options.smoothing
-  elif(options.classifier == "perceptron"):
+  elif(options.classifier == "perceptron" or options.classifier == "p"):
     classifier = perceptron.PerceptronClassifier(legalLabels,options.iterations)
   elif(options.classifier == "mira"):
     classifier = mira.MiraClassifier(legalLabels, options.iterations)
@@ -296,8 +297,13 @@ def runClassifier(args, options):
   printImage = args['printImage']
 
   # Load data
-  numTraining = options.training
-  numTest = options.test
+  if(options.data=="digits"):
+    numTraining = int(options.training*0.01* 5000)
+    numTest = int(options.test*0.01*1000)
+  else:
+    numTraining = int(options.training*0.01* 150)
+    numTest = int(options.test * 0.01 * 150)
+  print "training set size:\t" + str(options.training) + "% \t\t"+ str(numTraining)
 
   if(options.data=="faces"):
     rawTrainingData = samples.loadDataFile("facedata/facedatatrain", numTraining,FACE_DATUM_WIDTH,FACE_DATUM_HEIGHT)
@@ -332,7 +338,7 @@ def runClassifier(args, options):
   guesses = classifier.classify(testData)
   correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
   print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
-  analysis(classifier, guesses, testLabels, testData, rawTestData, printImage,-1)
+  analysis(classifier, guesses, testLabels, testData, rawTestData, printImage,options.analyze)
   
   # do odds ratio computation if specified at command line
   if((options.odds) & (options.classifier == "naiveBayes" or (options.classifier == "nb")) ):

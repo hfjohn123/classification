@@ -61,7 +61,28 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     """
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    self.prior = util.Counter()
+    for i in trainingLabels:
+      self.prior[i] += 1
+    self.prior.normalize()
+
+    self.condProb = {}
+    for i in trainingData[0]:
+      self.condProb[i] = {}
+      for m in self.legalLabels:
+        self.condProb[i][m]= util.Counter()
+        self.condProb[i][m][0] = 0.0000001
+        self.condProb[i][m][1] = 0.0000001
+
+    for i in range(len(trainingLabels)):
+      key = trainingLabels[i]
+      image = trainingData[i]
+      for f in image:
+        self.condProb[f][key][image[f]] += self.k
+
+    for i in trainingData[0]:
+      for m in self.legalLabels:
+        self.condProb[i][m].normalize()
         
   def classify(self, testData):
     """
@@ -87,10 +108,13 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     self.legalLabels.
     """
     logJoint = util.Counter()
-    
+
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-    
+    for i in self.legalLabels:
+      logJoint[i] = math.log(self.prior[i])
+      for m in datum:
+        logJoint[i] += math.log(self.condProb[m][i][datum[m]])
+
     return logJoint
   
   def findHighOddsFeatures(self, label1, label2):
