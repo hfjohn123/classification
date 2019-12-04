@@ -7,6 +7,8 @@
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
 # Perceptron implementation
+import random
+
 import util
 PRINT = True
 
@@ -44,7 +46,9 @@ class PerceptronClassifier:
     self.features = trainingData[0].keys() # could be useful later
     # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
     # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
-    
+    self.bias= util.Counter()
+    for label in self.legalLabels:
+      self.bias[label] = random.uniform(-1,1)
     for iteration in range(self.max_iterations):
       print "Starting iteration ", iteration, "..."
       for i in range(len(trainingData)):
@@ -52,11 +56,13 @@ class PerceptronClassifier:
 
           scores = util.Counter()
           for label in self.legalLabels:
-            scores[label] = trainingData[i]*self.weights[label]
 
+            scores[label] = trainingData[i]*self.weights[label]+self.bias[label]
           if (trainingLabels[i] != scores.argMax()):
             self.weights[trainingLabels[i]] += trainingData[i]
+            self.bias[trainingLabels[i]] += 1
             self.weights[scores.argMax()] -= trainingData[i]
+            self.bias[scores.argMax()] -= 1
 
   def classify(self, data ):
     """
