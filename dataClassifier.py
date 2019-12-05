@@ -76,12 +76,8 @@ def enhancedFeatureExtractorDigit(datum):
 
   for x in range(DIGIT_DATUM_WIDTH):
     for y in range(DIGIT_DATUM_HEIGHT):
-        if a[y][x] == 1:
-          features[(x, y)] = 0.5
-        elif a[y][x] == 2:
-          features[(x, y)] = 1
-        else:
-          features[(x, y)] = 0
+      features[(x, y)] = a[y][x]
+
   return features
 
 def contestFeatureExtractorDigit(datum):
