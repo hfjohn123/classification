@@ -9,7 +9,7 @@
 import util
 import classificationMethod
 import math
-
+from collections import Counter
 class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
   """
   See the project description for the specifications of the Naive Bayes classifier.
@@ -62,6 +62,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
 
     "*** YOUR CODE HERE ***"
     self.prior = util.Counter()
+    featureList = (Counter(trainingData[0].values()))
     for i in trainingLabels:
       self.prior[i] += 1
     self.prior.normalize()
@@ -71,8 +72,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
       self.condProb[i] = {}
       for m in self.legalLabels:
         self.condProb[i][m]= util.Counter()
-        self.condProb[i][m][0] = 0.0000001
-        self.condProb[i][m][1] = 0.0000001
+        for x in featureList:
+          self.condProb[i][m][x] = 0.0000001
 
     for i in range(len(trainingLabels)):
       key = trainingLabels[i]

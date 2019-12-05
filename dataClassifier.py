@@ -68,18 +68,28 @@ def enhancedFeatureExtractorDigit(datum):
   
   ##
   """
-  features =  basicFeatureExtractorDigit(datum)
+  #features =  basicFeatureExtractorDigit(datum)
 
   "*** YOUR CODE HERE ***"
+  features = util.Counter()
+  a = datum.getPixels()
 
+  for x in range(DIGIT_DATUM_WIDTH):
+    for y in range(DIGIT_DATUM_HEIGHT):
+        if a[y][x] == 1:
+          features[(x, y)] = 0.5
+        elif a[y][x] == 2:
+          features[(x, y)] = 1
+        else:
+          features[(x, y)] = 0
   return features
-
 
 def contestFeatureExtractorDigit(datum):
   """
   Specify features to use for the minicontest
   """
   features =  basicFeatureExtractorDigit(datum)
+
   return features
 
 def enhancedFeatureExtractorFace(datum):
