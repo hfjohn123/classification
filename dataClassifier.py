@@ -76,7 +76,7 @@ def enhancedFeatureExtractorDigit(datum):
 
   for x in range(DIGIT_DATUM_WIDTH):
     for y in range(DIGIT_DATUM_HEIGHT):
-      features[(x, y)] = a[y][x]
+      features[(x, y)] = a[x][y]
 
   return features
 
