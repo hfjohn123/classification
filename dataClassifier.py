@@ -17,6 +17,7 @@ import samples
 import sys
 import util
 import kNN
+from datetime import datetime
 
 TEST_SET_SIZE = 100
 DIGIT_DATUM_WIDTH=28
@@ -371,4 +372,6 @@ if __name__ == '__main__':
   # Read input
   args, options = readCommand( sys.argv[1:] ) 
   # Run classifier
+  start=datetime.now()
   runClassifier(args, options)
+  print "runtime = ",(datetime.now()-start).total_seconds(),"seconds"
